@@ -12,3 +12,4 @@ git clone "https://github.com/Adiaslow/computational-biology-tools.git"
 ```bash
 bash computational-biology-tools/bash_scripts/<script_name> <arguments>
 ```
+*See each script for the required arguments.*
