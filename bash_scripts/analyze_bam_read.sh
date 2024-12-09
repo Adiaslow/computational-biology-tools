@@ -51,29 +51,80 @@ function decode_flag(flag) {
 }
 
 function analyze_cigar(cigar) {
-    # Analyze CIGAR string for detailed operations
-    cigar_info = ""
+    # Initialize arrays to store lengths for each operation type
+    delete match_lengths
+    delete deletion_lengths
+    delete insertion_lengths
+    delete splice_lengths
+
+    # Initialize counters
     n = ""
     matches = 0
     deletions = 0
     insertions = 0
     splice_sites = 0
+    match_count = 0
+    deletion_count = 0
+    insertion_count = 0
+    splice_count = 0
 
+    # Parse CIGAR string
     for(i=1; i<=length(cigar); i++) {
         c = substr(cigar,i,1)
-        if(c ~ /[0-9]/) n = n c
+        if(c ~ /[0-9]/) {
+            n = n c
+        }
         else {
             num = int(n)
-            if(c == "M") matches += num
-            else if(c == "D") deletions += num
-            else if(c == "I") insertions += num
-            else if(c == "N") splice_sites += 1
+            if(c == "M") {
+                matches += num
+                match_lengths[match_count++] = num
+            }
+            else if(c == "D") {
+                deletions += num
+                deletion_lengths[deletion_count++] = num
+            }
+            else if(c == "I") {
+                insertions += num
+                insertion_lengths[insertion_count++] = num
+            }
+            else if(c == "N") {
+                splice_sites += 1
+                splice_lengths[splice_count++] = num
+            }
             n = ""
         }
     }
 
-    cigar_info = sprintf("Matches: %d, Deletions: %d, Insertions: %d, Splice junctions: %d",
-                        matches, deletions, insertions, splice_sites)
+    # Build detailed output string
+    cigar_info = sprintf("Matches: %d (Lengths:", matches)
+    for(i=0; i<match_count; i++) {
+        cigar_info = cigar_info " " match_lengths[i]
+        if(i < match_count-1) cigar_info = cigar_info ","
+    }
+    cigar_info = cigar_info ")"
+
+    cigar_info = cigar_info sprintf("\nDeletions: %d (Lengths:", deletions)
+    for(i=0; i<deletion_count; i++) {
+        cigar_info = cigar_info " " deletion_lengths[i]
+        if(i < deletion_count-1) cigar_info = cigar_info ","
+    }
+    cigar_info = cigar_info ")"
+
+    cigar_info = cigar_info sprintf("\nInsertions: %d (Lengths:", insertions)
+    for(i=0; i<insertion_count; i++) {
+        cigar_info = cigar_info " " insertion_lengths[i]
+        if(i < insertion_count-1) cigar_info = cigar_info ","
+    }
+    cigar_info = cigar_info ")"
+
+    cigar_info = cigar_info sprintf("\nSplice junctions: %d (Lengths:", splice_sites)
+    for(i=0; i<splice_count; i++) {
+        cigar_info = cigar_info " " splice_lengths[i]
+        if(i < splice_count-1) cigar_info = cigar_info ","
+    }
+    cigar_info = cigar_info ")"
+
     return cigar_info
 }
 
