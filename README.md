@@ -8,11 +8,7 @@ rm -rf computational-biology-tools/
 ```bash
 git clone "https://github.com/Adiaslow/computational-biology-tools.git"
 ```
-2. Navigate to Repository:
+2. Run Script:
 ```bash
-cd computational-biology-tools
-```
-3. Run Script:
-```bash
-bash ./bash_scripts/<script_name> <arguments>
+bash computational-biology-tools/bash_scripts/<script_name> <arguments>
 ```
