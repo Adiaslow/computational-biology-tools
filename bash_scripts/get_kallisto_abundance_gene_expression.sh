@@ -45,9 +45,7 @@ if [ -z "$tpm_sum" ] || [ "$tpm_sum" == "0" ]; then
     echo "Warning: No matches found for gene '$GENE_NAME'"
     exit 1
 else
-    echo "Gene: $GENE_NAME"
-    echo "Total Expression (TPM): $tpm_sum"
-    # Also show the individual transcript values for verification
+    # Show the individual transcript values for verification
     echo -e "\nIndividual transcript TPM values:"
     awk -v gene="$GENE_NAME" '
         NR > 1 {
@@ -58,4 +56,6 @@ else
             }
         }
     ' "$ABUNDANCE_FILE"
+    echo "Gene: $GENE_NAME"
+    echo "Total Expression (TPM): $tpm_sum"
 fi
