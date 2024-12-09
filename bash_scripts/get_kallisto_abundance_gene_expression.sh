@@ -24,7 +24,7 @@ if [ ! -f "$ABUNDANCE_FILE" ]; then
     exit 1
 fi
 
-# Sum TPM values for the specified gene and round to 2 decimal places
+# Sum TPM values for the specified gene with full precision
 tpm_sum=$(awk -v gene="$GENE_NAME" '
     # Skip header line
     NR > 1 {
@@ -35,19 +35,18 @@ tpm_sum=$(awk -v gene="$GENE_NAME" '
         }
     }
     END {
-        # Print with 2 decimal places
-        printf "%", sum
+        # Print with full precision
+        print sum
     }
 ' "$ABUNDANCE_FILE")
 
 # Check if any matches were found
-if [ -z "$tpm_sum" ] || [ "$tpm_sum" == "0.00" ]; then
+if [ -z "$tpm_sum" ] || [ "$tpm_sum" == "0" ]; then
     echo "Warning: No matches found for gene '$GENE_NAME'"
     exit 1
 else
     echo "Gene: $GENE_NAME"
     echo "Total Expression (TPM): $tpm_sum"
-
     # Also show the individual transcript values for verification
     echo -e "\nIndividual transcript TPM values:"
     awk -v gene="$GENE_NAME" '
