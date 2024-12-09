@@ -14,7 +14,9 @@
 # Load the necessary modules
 module load <module1_name>
 module load <module2_name>
+# Example: module load STAR
 
 # Run the program with the necessary arguments
 <command1> <arguments>
 <command2> <arguments>
+# Example: STAR --runThreadN 6 --genomeDir /path/to/genome --readFilesIn /path/to/reads.fastq
