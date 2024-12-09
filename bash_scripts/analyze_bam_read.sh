@@ -138,26 +138,6 @@ function analyze_cigar(cigar) {
         print "CIGAR string:", $6
         print analyze_cigar($6)
 
-        # Special checks for junction reads
-        if ($6 ~ /N/) {
-            print "\nJunction Information:"
-            print "-------------------"
-            print "This read spans an exon-exon junction"
-            if (read ~ /SRR2175475.32870740/) {
-                print "This is the specific junction read from Question 5"
-                print "Junction CIGAR:", $6
-                print "Junction start position:", $4
-            }
-        }
-
-        # Check for specific position (Question 7)
-        if (read ~ /SRR2175475.35189724/ && $4 == 57936998) {
-            print "\nSpecific Position Match:"
-            print "----------------------"
-            print "This is the read from Question 7"
-            print "FLAG value:", $2
-        }
-
         print "\n"
     }
 }'
