@@ -34,7 +34,6 @@ if [ ! -f "$CHROMHMM_BED" ]; then
 fi
 
 # Load bedtools module
-module purge
 module load bedtools
 
 # Verify bedtools is available
