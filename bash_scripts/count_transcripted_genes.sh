@@ -34,6 +34,7 @@ if [ ! -f "$CHROMHMM_BED" ]; then
 fi
 
 # Load bedtools module
+module purge
 module load bedtools
 
 # Verify bedtools is available
@@ -46,6 +47,21 @@ fi
 echo "=== Gene Analysis Results ==="
 echo
 
+# Show first few lines of ChromHMM file
+echo "First few lines of ChromHMM file:"
+head -n 3 "$CHROMHMM_BED"
+echo
+
+# Show example of a line containing Txn_Elongation
+echo "Example lines containing Txn_Elongation:"
+grep -m 3 "Txn_Elongation" "$CHROMHMM_BED"
+echo
+
+# Debug: Print fourth field of each line to see exact format
+echo "First few fourth fields:"
+head -n 3 "$CHROMHMM_BED" | cut -f 4
+echo
+
 # Count and display total number of genes
 total_genes=$(wc -l < "$REFSEQ_BED")
 echo "Total number of genes: $total_genes"
@@ -54,29 +70,18 @@ echo "Total number of genes: $total_genes"
 TMP_TXN=$(mktemp)
 trap 'rm -f "$TMP_TXN"' EXIT
 
-# Debug: Check unique states in ChromHMM file
-echo -e "\nUnique states in ChromHMM file:"
-cut -f 4 "$CHROMHMM_BED" | sort | uniq
-
-# Extract Txn_Elongation states from ChromHMM file
-awk '$4 == "Txn_Elongation"' "$CHROMHMM_BED" > "$TMP_TXN"
+# Extract Txn_Elongation states using grep to see actual matches
+grep "10_Txn_Elongation" "$CHROMHMM_BED" > "$TMP_TXN"
 
 # Debug: Check if we found any Txn_Elongation regions
 txn_regions=$(wc -l < "$TMP_TXN")
-echo -e "\nNumber of Txn_Elongation regions found: $txn_regions"
+echo "Number of Txn_Elongation regions found: $txn_regions"
 
 # Use bedtools intersect to find transcribed genes
 bedtools intersect -a "$REFSEQ_BED" -b "$TMP_TXN" -u > "$OUTPUT_BED"
 
 # Count and display number of transcribed genes
 transcribed_genes=$(wc -l < "$OUTPUT_BED")
-echo -e "\nNumber of transcribed genes: $transcribed_genes"
-
-# Debug: Show the first few lines of the temporary and output files
-echo -e "\nFirst few lines of Txn_Elongation regions file:"
-head -n 3 "$TMP_TXN"
-
-echo -e "\nFirst few lines of output file (if any):"
-head -n 3 "$OUTPUT_BED"
-
-echo -e "\nResults written to: $OUTPUT_BED"
+echo "Number of transcribed genes: $transcribed_genes"
+echo
+echo "Results written to: $OUTPUT_BED"
