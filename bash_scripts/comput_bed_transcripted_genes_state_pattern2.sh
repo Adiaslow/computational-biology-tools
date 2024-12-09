@@ -1,7 +1,7 @@
 #!/bin/bash
 # Check if correct number of arguments provided
 if [ "$#" -ne 4 ]; then
-    echo "Usage: $0 <refseq_bed> <chromhmm_bed> <state_pattern> <output_bed>"
+    echo "Usage: $0 <refseq_bed> <chromhmm_bed> <output_bed> <state_pattern>"
     echo
     echo "Description:"
     echo "  This script performs comprehensive analysis of ChromHMM states and their"
@@ -11,19 +11,19 @@ if [ "$#" -ne 4 ]; then
     echo "Arguments:"
     echo "  refseq_bed    - BED file with RefSeq genes"
     echo "  chromhmm_bed  - BED file with ChromHMM states"
-    echo "  state_pattern - Pattern to match ChromHMM state (e.g., Active_Promoter)"
     echo "  output_bed    - Output file name for identified genes"
+    echo "  state_pattern - Pattern to match ChromHMM state (e.g., Active_Promoter)"
     echo
     echo "Example:"
-    echo "  $0 RefSeq_genes_chr22_part_genesMerged.bed NHLF_ChromHMM_chr22_part.bed Active_Promoter output.bed"
+    echo "  $0 RefSeq_genes_chr22_part_genesMerged.bed NHLF_ChromHMM_chr22_part.bed output.bed Active_Promoter"
     exit 1
 fi
 
 # Get arguments
 REFSEQ_BED="$1"
 CHROMHMM_BED="$2"
-STATE_PATTERN="$3"
-OUTPUT_BED="$4"
+OUTPUT_BED="$3"
+STATE_PATTERN="$4"
 
 # Check if input files exist
 if [ ! -f "$REFSEQ_BED" ]; then
