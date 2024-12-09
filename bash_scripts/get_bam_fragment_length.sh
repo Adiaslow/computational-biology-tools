@@ -39,41 +39,11 @@ fi
 # Extract fragment length information using awk
 samtools view "$BAM_FILE" | awk -v read="$READ_NAME" '
 $1 == read {
-    # Store information about each read in the pair
-    if (NR == 1) {
-        tlen1 = sqrt($9 * $9)  # Get absolute value of TLEN field
-        flag1 = $2
-        pos1 = $4
-    }
-    else if (NR == 2) {
-        tlen2 = sqrt($9 * $9)  # Get absolute value of TLEN field
-        flag2 = $2
-        pos2 = $4
-    }
+    # Store all values in arrays indexed by FLAG
+    tlen[$2] = sqrt($9 * $9)  # absolute value of TLEN
+    pos[$2] = $4
+    flags[$2] = $2
     count++
-
-    # After processing both reads in the pair
-    if (count == 2) {
-        # Both TLEN values should be equal
-        if (tlen1 != tlen2) {
-            print "Warning: Inconsistent fragment lengths detected"
-            print "Read 1 TLEN:", tlen1
-            print "Read 2 TLEN:", tlen2
-        }
-
-        # Print detailed information
-        print "Fragment Analysis for read pair:", read
-        print "--------------------------------"
-        print "Fragment length:", tlen1
-        print "\nRead 1:"
-        print "Position:", pos1
-        print "FLAG:", flag1
-        print "\nRead 2:"
-        print "Position:", pos2
-        print "FLAG:", flag2
-
-        exit
-    }
 }
 END {
     if (count == 0) {
@@ -84,4 +54,30 @@ END {
         print "Error: Only one read of the pair found"
         exit 1
     }
+
+    # Print fragment analysis
+    print "Fragment Analysis for read pair:", read
+    print "--------------------------------"
+
+    # Find the reads (first in pair has FLAG & 64, second has FLAG & 128)
+    for (f in flags) {
+        if (and(f, 64)) {  # First read in pair
+            read1_flag = f
+            read1_pos = pos[f]
+            read1_tlen = tlen[f]
+        }
+        if (and(f, 128)) {  # Second read in pair
+            read2_flag = f
+            read2_pos = pos[f]
+            read2_tlen = tlen[f]
+        }
+    }
+
+    print "Fragment length:", read1_tlen
+    print "\nRead 1:"
+    print "Position:", read1_pos
+    print "FLAG:", read1_flag
+    print "\nRead 2:"
+    print "Position:", read2_pos
+    print "FLAG:", read2_flag
 }'
