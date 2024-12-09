@@ -27,6 +27,6 @@ bash computational-biology-tools/bash_scripts/<script_name> <arguments>
 - `get_bam_fragment_length.sh`
   - Calculates the fragment length for a specific paired-end read from a BAM file.
 - `get_kallisto_abundance_gene_expression.sh`
- - Calculates total gene expression (TPM) from Kallisto abundance output.
+  - Calculates total gene expression (TPM) from Kallisto abundance output.
 - `get_vcf_snp_haplotypes.sh`
   - Processes phased genotype data and outputs both haplotypes as sequences of alleles.
