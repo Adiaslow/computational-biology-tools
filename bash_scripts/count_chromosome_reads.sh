@@ -5,6 +5,7 @@ if [ "$#" -ne 2 ]; then
     echo
     echo "Description:"
     echo "  Counts the number of reads aligned to specified chromosome in a BAM file"
+    echo "  Automatically creates BAM index if needed"
     echo
     echo "Arguments:"
     echo "  bam_file    - Path to the BAM file"
@@ -35,6 +36,20 @@ fi
 if ! command -v samtools &> /dev/null; then
     echo "Error: Failed to load samtools module"
     exit 1
+fi
+
+# Check if BAM index exists
+BAI_FILE="${BAM_FILE}.bai"
+if [ ! -f "$BAI_FILE" ]; then
+    echo "BAM index not found. Creating index..."
+    samtools index "$BAM_FILE"
+
+    # Verify index creation was successful
+    if [ ! -f "$BAI_FILE" ]; then
+        echo "Error: Failed to create BAM index"
+        exit 1
+    fi
+    echo "BAM index created successfully"
 fi
 
 # Add 'chr' prefix if not present
